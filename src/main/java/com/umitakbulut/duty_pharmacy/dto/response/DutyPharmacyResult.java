@@ -10,6 +10,7 @@ import java.io.Serializable;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class DutyPharmacyResult implements Serializable {
     @Serial
     private static final long serialVersionUID = -2446737051216000757L;

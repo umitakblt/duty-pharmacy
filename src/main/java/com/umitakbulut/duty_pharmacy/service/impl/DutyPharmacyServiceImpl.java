@@ -2,26 +2,56 @@ package com.umitakbulut.duty_pharmacy.service.impl;
 
 import com.umitakbulut.duty_pharmacy.dto.request.DutyPharmacyRequestDTO;
 import com.umitakbulut.duty_pharmacy.dto.response.DutyPharmacyResponseDTO;
+import com.umitakbulut.duty_pharmacy.dto.response.DutyPharmacyResult;
+import com.umitakbulut.duty_pharmacy.exception.DutyPharmacyException;
+import com.umitakbulut.duty_pharmacy.exception.DutyPharmacyExceptionEnum;
 import com.umitakbulut.duty_pharmacy.external.dutypharmacy.DutyPharmacyExternalService;
+import com.umitakbulut.duty_pharmacy.external.dutypharmacy.model.DutyPharmacyResponse;
+import com.umitakbulut.duty_pharmacy.repository.DutyPharmacyRepository;
 import com.umitakbulut.duty_pharmacy.service.DutyPharmacyService;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class DutyPharmacyServiceImpl implements DutyPharmacyService {
+    private static final Logger log = LoggerFactory.getLogger(DutyPharmacyServiceImpl.class);
     private final DutyPharmacyExternalService dutyPharmacyExternalService;
+    private final DutyPharmacyRepository dutyPharmacyRepository;
 
-    @Override
+    private static final String DUTY_PHARMACY_API_KEY = "apikey 32SW8VFp7VSjuv4WpGIUzX:1mp4YKzlSayIa2ARtNDOwr";
+
     public DutyPharmacyResponseDTO checkDutyPharmacy(DutyPharmacyRequestDTO dutyPharmacyRequestDTO) {
+        log.info("DutyPharmacyServiceImpl.checkDutyPharmacy(): dutyPharmacyRequestDTO: {}", dutyPharmacyRequestDTO);
 
-        // Dış servise istek atılacak
+        DutyPharmacyResponse dutyPharmacyResponse = null;
+        try {
+            dutyPharmacyResponse = this.dutyPharmacyExternalService.getDutyPharmacy(dutyPharmacyRequestDTO.getDistrictName(), dutyPharmacyRequestDTO.getCityName(), DUTY_PHARMACY_API_KEY);
+        } catch (Exception exception) {
+            log.error("DutyPharmacyServiceImpl.checkDutyPharmacy(): exceptionMessage: {} ", exception.getMessage(), exception);
+            throw new DutyPharmacyException(DutyPharmacyExceptionEnum.DUTY_PHARMACY_EXTERNAL_SERVICE_ERROR);
+        }
 
-        // hata alma durumunda bizim exception üretilecek
+        if (dutyPharmacyResponse == null ||
+            !dutyPharmacyResponse.getSuccess() ||
+            dutyPharmacyResponse.getResult() == null ||
+            dutyPharmacyResponse.getResult().isEmpty()) {
+            log.error("DutyPharmacyServiceImpl.checkDutyPharmacy(): DutyPharmacyResponse is null or empty");
+            throw new DutyPharmacyException(DutyPharmacyExceptionEnum.DUTY_PHARMACY_EXTERNAL_SERVICE_NULL_ERROR);
+        }
 
-        // error durumları kontrol edilecek
+        List<DutyPharmacyResult> results = dutyPharmacyResponse.getResult().stream().map(duty -> DutyPharmacyResult
+                .builder().name(duty.getName())
+                .dist(duty.getDist())
+                .phone(duty.getPhone())
+                .address(duty.getAddress())
+                .location(duty.getLocation())
+                .build()).toList();
 
-        // hazelcast ve database durumlarına yarına bırak.
-        return null;
+        return new DutyPharmacyResponseDTO(results);
     }
 }
