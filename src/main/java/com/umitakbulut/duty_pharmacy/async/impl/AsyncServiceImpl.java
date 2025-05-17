@@ -13,18 +13,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class, readOnly = true)
 public class AsyncServiceImpl implements AsyncService {
     private final DutyPharmacyRepository dutyPharmacyRepository;
     private final ObjectMapper objectMapper;
 
     @Async(value = "asyncThreadPoolTaskExecutor")
     @Override
+    @Transactional
     public void saveDatabase(List<DutyPharmacyResult> results, DutyPharmacyRequestDTO dutyPharmacyRequestDTO) {
         log.info("AsyncServiceImpl.saveDatabase(): results: {}, dutyPharmacyRequestDTO: {}" , results, dutyPharmacyRequestDTO);
         String dutyPharmacies;
