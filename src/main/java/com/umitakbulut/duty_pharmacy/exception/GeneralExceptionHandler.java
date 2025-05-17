@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DutyPharmacyException.class)
-    public ResponseEntity<?> authorizationExceptionHandler(DutyPharmacyException userException) {
-        return new ResponseEntity<ErrorDTO>(new ErrorDTO(userException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.value(), userException.getKey()),HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<?> authorizationExceptionHandler(DutyPharmacyException dutyPharmacyException) {
+        return new ResponseEntity<>(new ErrorDTO(dutyPharmacyException.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.value(), dutyPharmacyException.getKey()),HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
