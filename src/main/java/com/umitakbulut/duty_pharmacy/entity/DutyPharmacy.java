@@ -5,9 +5,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import jakarta.persistence.Table;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.Instant;
 
 @Entity
 @Table(name = "duty_pharmacy")
@@ -33,4 +36,12 @@ public class DutyPharmacy implements Serializable {
     @Lob
     @Column(name = "duty_pharmacies", nullable = false, length = 65535)
     private String dutyPharmacies;
+
+    @CreationTimestamp
+    @Column(name = "created", nullable = false)
+    private Instant created;
+
+    @UpdateTimestamp
+    @Column(name = "updated", nullable = false)
+    private Instant updated;
 }

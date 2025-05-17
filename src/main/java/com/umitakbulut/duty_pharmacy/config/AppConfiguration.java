@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 public class AppConfiguration {
     ThreadPoolProperties threadPool = new ThreadPoolProperties();
     ExternalServiceProperties externalService = new ExternalServiceProperties();
+    HazelcastProperties hazelcast = new HazelcastProperties();
 
     @Getter
     @Setter
@@ -31,5 +32,14 @@ public class AppConfiguration {
     public static class ExternalServiceProperties {
         private String url;
         private String token;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class HazelcastProperties {
+        private String instanceName = "duty-hazelcast";
+        private int port = 5701;
     }
 }

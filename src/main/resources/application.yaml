@@ -10,6 +10,8 @@ spring:
     hibernate:
       ddl-auto: update
 server:
+  servlet:
+    context-path: /api/duty
   port: 8081
 
 application:
@@ -21,3 +23,6 @@ application:
     max-pool-size: 20
     queue-capacity: 200
     thread-name-prefix: async-thread-
+  hazelcast:
+    instance-name: duty-hazelcast
+    port: 5702
