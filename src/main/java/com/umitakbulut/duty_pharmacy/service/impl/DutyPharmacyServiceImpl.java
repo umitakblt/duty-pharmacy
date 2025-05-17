@@ -1,5 +1,6 @@
 package com.umitakbulut.duty_pharmacy.service.impl;
 
+import com.umitakbulut.duty_pharmacy.async.AsyncService;
 import com.umitakbulut.duty_pharmacy.dto.request.DutyPharmacyRequestDTO;
 import com.umitakbulut.duty_pharmacy.dto.response.DutyPharmacyResponseDTO;
 import com.umitakbulut.duty_pharmacy.dto.response.DutyPharmacyResult;
@@ -7,7 +8,6 @@ import com.umitakbulut.duty_pharmacy.exception.DutyPharmacyException;
 import com.umitakbulut.duty_pharmacy.exception.DutyPharmacyExceptionEnum;
 import com.umitakbulut.duty_pharmacy.external.dutypharmacy.DutyPharmacyExternalService;
 import com.umitakbulut.duty_pharmacy.external.dutypharmacy.model.DutyPharmacyResponse;
-import com.umitakbulut.duty_pharmacy.repository.DutyPharmacyRepository;
 import com.umitakbulut.duty_pharmacy.service.DutyPharmacyService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -22,7 +22,7 @@ import java.util.List;
 public class DutyPharmacyServiceImpl implements DutyPharmacyService {
     private static final Logger log = LoggerFactory.getLogger(DutyPharmacyServiceImpl.class);
     private final DutyPharmacyExternalService dutyPharmacyExternalService;
-    private final DutyPharmacyRepository dutyPharmacyRepository;
+    private final AsyncService asyncService;
 
     private static final String DUTY_PHARMACY_API_KEY = "apikey 32SW8VFp7VSjuv4WpGIUzX:1mp4YKzlSayIa2ARtNDOwr";
 
@@ -54,6 +54,8 @@ public class DutyPharmacyServiceImpl implements DutyPharmacyService {
                 .address(duty.getAddress())
                 .location(duty.getLocation())
                 .build()).toList();
+
+        this.asyncService.saveDatabase(results, dutyPharmacyRequestDTO);
 
         return new DutyPharmacyResponseDTO(results);
     }

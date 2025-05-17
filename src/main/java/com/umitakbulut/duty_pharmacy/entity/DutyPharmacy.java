@@ -17,6 +17,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @ToString
 public class DutyPharmacy implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -6487996242046884555L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
@@ -26,4 +29,8 @@ public class DutyPharmacy implements Serializable {
 
     @Column(name = "city_name", nullable = false)
     private String cityName;
+
+    @Lob
+    @Column(name = "duty_pharmacies", nullable = false, length = 65535)
+    private String dutyPharmacies;
 }
