@@ -1,6 +1,7 @@
 package com.umitakbulut.duty_pharmacy.service.impl;
 
 import com.umitakbulut.duty_pharmacy.async.AsyncService;
+import com.umitakbulut.duty_pharmacy.config.AppConfiguration;
 import com.umitakbulut.duty_pharmacy.dto.request.DutyPharmacyRequestDTO;
 import com.umitakbulut.duty_pharmacy.dto.response.DutyPharmacyResponseDTO;
 import com.umitakbulut.duty_pharmacy.dto.response.DutyPharmacyResult;
@@ -22,10 +23,8 @@ import java.util.List;
 public class DutyPharmacyServiceImpl implements DutyPharmacyService {
     private static final Logger log = LoggerFactory.getLogger(DutyPharmacyServiceImpl.class);
     private final DutyPharmacyExternalService dutyPharmacyExternalService;
+    private final AppConfiguration appConfiguration;
     private final AsyncService asyncService;
-
-    private static final String DUTY_PHARMACY_API_KEY = "apikey 32SW8VFp7VSjuv4WpGIUzX:1mp4YKzlSayIa2ARtNDOwr";
-
 
     @Cacheable(key = "#dutyPharmacyRequestDTO.cityName + #dutyPharmacyRequestDTO.districtName", value = "dutyChecks")
     public DutyPharmacyResponseDTO checkDutyPharmacy(DutyPharmacyRequestDTO dutyPharmacyRequestDTO) {
@@ -33,7 +32,7 @@ public class DutyPharmacyServiceImpl implements DutyPharmacyService {
 
         DutyPharmacyResponse dutyPharmacyResponse = null;
         try {
-            dutyPharmacyResponse = this.dutyPharmacyExternalService.getDutyPharmacy(dutyPharmacyRequestDTO.getDistrictName(), dutyPharmacyRequestDTO.getCityName(), DUTY_PHARMACY_API_KEY);
+            dutyPharmacyResponse = this.dutyPharmacyExternalService.getDutyPharmacy(dutyPharmacyRequestDTO.getDistrictName(), dutyPharmacyRequestDTO.getCityName(), appConfiguration.getExternalService().getToken());
         } catch (Exception exception) {
             log.error("DutyPharmacyServiceImpl.checkDutyPharmacy(): exceptionMessage: {} ", exception.getMessage(), exception);
             throw new DutyPharmacyException(DutyPharmacyExceptionEnum.DUTY_PHARMACY_EXTERNAL_SERVICE_ERROR);
