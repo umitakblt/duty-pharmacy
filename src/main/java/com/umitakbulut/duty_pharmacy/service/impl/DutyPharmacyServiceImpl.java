@@ -12,6 +12,7 @@ import com.umitakbulut.duty_pharmacy.service.DutyPharmacyService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,6 +26,8 @@ public class DutyPharmacyServiceImpl implements DutyPharmacyService {
 
     private static final String DUTY_PHARMACY_API_KEY = "apikey 32SW8VFp7VSjuv4WpGIUzX:1mp4YKzlSayIa2ARtNDOwr";
 
+
+    @Cacheable(key = "#dutyPharmacyRequestDTO.cityName + #dutyPharmacyRequestDTO.districtName", value = "dutyChecks")
     public DutyPharmacyResponseDTO checkDutyPharmacy(DutyPharmacyRequestDTO dutyPharmacyRequestDTO) {
         log.info("DutyPharmacyServiceImpl.checkDutyPharmacy(): dutyPharmacyRequestDTO: {}", dutyPharmacyRequestDTO);
 
